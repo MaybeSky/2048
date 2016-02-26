@@ -103,9 +103,16 @@ struct UnitBezier {
         return t2;
     }
 
-    double solve(double x, double epsilon)
+	// The epsilon value we pass to UnitBezier::solve given that the animation is going to run over |dur| seconds. The longer the
+	// animation, the more precision we need in the timing function result to avoid ugly discontinuities.
+	double solveEpsilon(double duration)
+	{
+		return 1.0 / (200.0 * duration);
+	}
+
+    double solve(double x, double duration)
     {
-        return sampleCurveY(solveCurveX(x, epsilon));
+        return sampleCurveY(solveCurveX(x, solveEpsilon(duration)));
     }
         
 private:
@@ -117,4 +124,5 @@ private:
     double by;
     double cy;
 };
+
 #endif

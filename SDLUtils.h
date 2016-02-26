@@ -34,6 +34,17 @@ public:
 		SDL_RenderDrawRect(m_renderer, &rect);
 	}
 
+	void fillRect(int x, int y, int w, int h)
+	{
+		SDL_Rect rect = { x, y, w, h };
+		SDL_RenderFillRect(m_renderer, &rect);
+	}
+
+	void drawLine(int x1, int y1, int x2, int y2)
+	{
+		SDL_RenderDrawLine(m_renderer, x1, y1, x2, y2);
+	}
+
 	void present() { SDL_RenderPresent(m_renderer); }
 
 private:

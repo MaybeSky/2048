@@ -33,7 +33,7 @@ bool InitSDL()
 			success = false;
 		}
 		else {
-			g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED);
+			g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 			if(g_renderer == NULL) {
 				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
 			}

@@ -1,16 +1,91 @@
 #include "UnitBezier.h"
+#include "Animation.h"
 
-// The epsilon value we pass to UnitBezier::solve given that the animation is going to run over |dur| seconds. The longer the
-// animation, the more precision we need in the timing function result to avoid ugly discontinuities.
-static inline double solveEpsilon(double duration)
+static UnitBezier bezier_ease(0.25, 0.1, 0.25, 1.0);
+static UnitBezier bezier_easeInOut(0.42, 0.0, 0.58, 1.0);
+
+inline double interploate(double from, double to, double ratio)
 {
-    return 1.0 / (200.0 * duration);
+	return from + (to - from) * ratio;
 }
 
-static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x, double p2y, double t, double duration)
+inline double timing(TimingFunction timingFunc, int duration, double input)
 {
-    // Convert from input time to parametric value in curve, then from
-    // that to output time.
-    UnitBezier bezier(p1x, p1y, p2x, p2y);
-    return bezier.solve(t, solveEpsilon(duration));
+	switch(timingFunc) {
+	case TMFUNC_LINEAR:
+		return input;
+	case TMFUNC_EASE:
+		return bezier_ease.solve(input, duration);
+	case TMFUNC_EASE_IN_OUT:
+		return bezier_easeInOut.solve(input, duration);
+	default:
+		// avoid warning
+		return 0.0;
+	}
+}
+
+void ValueTransition::add(int percent, double value)
+{
+	PercentValuePair p;
+	p.percent = percent;
+	p.value = value;
+	m_pairs.push_back(p);
+}
+
+double ValueTransition::calculate(int elapsed, int duration, TimingFunction timingFunc)
+{
+	auto iter = m_pairs.cbegin();
+
+	while(elapsed * 100 / duration >= (iter + 1)->percent) {
+		iter++;
+		if(iter->percent == 100)
+			return iter->value;
+	}
+
+	auto next = iter + 1;
+	auto offset_ms = elapsed - iter->percent / 100.0 * duration;
+	auto percent_diff = next->percent - iter->percent;
+	auto interval_ms = percent_diff / 100.0 * duration;
+
+	return interploate(iter->value, next->value, timing(timingFunc, duration, offset_ms / interval_ms));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Animation::~Animation()
+{
+	for(auto iter = m_transitions.cbegin(); iter != m_transitions.cend(); iter++) {
+		delete (*iter);
+	}
+}
+
+ValueTransition *Animation::createTransition(int propertyID)
+{
+	ValueTransition *t = new ValueTransition(propertyID);
+	m_transitions.push_back(t);
+	return t;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void AnimationExecutor::init()
+{
+	for(auto iter = m_transitions.cbegin(); iter != m_transitions.cend(); iter++) {
+		m_target->setProperty((*iter)->propertyID(), (*iter)->initialValue());
+	}
+}
+
+void AnimationExecutor::progress(int delta_ms)
+{
+	if(!m_alive)
+		return;
+
+	if((m_elapsed += delta_ms) >= m_duration)
+		m_alive = false;
+
+	for(auto iter = m_transitions.cbegin(); iter != m_transitions.cend(); iter++) {
+		m_target->setProperty(
+			(*iter)->propertyID(),
+			(*iter)->calculate(m_elapsed, m_duration, m_timingFunc));
+	}
 }

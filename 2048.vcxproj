@@ -80,9 +80,12 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SDLUtils.cpp" />
+    <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="SDLUtils.h" />
+    <ClInclude Include="Tile.h" />
     <ClInclude Include="UnitBezier.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
