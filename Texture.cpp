@@ -105,6 +105,16 @@ void Texture::render(int x, int y, SDL_Rect *clip)
 	g_render.copy(m_texture, clip, &renderQuad);
 }
 
+void Texture::renderScaled(int x, int y, double ratio)
+{
+	SDL_Rect dstRect = {
+		x, y,
+		static_cast<int>(m_width * ratio), static_cast<int>(m_width * ratio)
+	};
+
+	g_render.copy(m_texture, NULL, &dstRect);
+}
+
 bool Texture::createBlank(int width, int height, SDL_TextureAccess access)
 {
 	m_texture = g_render.createTexture(SDL_PIXELFORMAT_RGBA8888, access, width, height);

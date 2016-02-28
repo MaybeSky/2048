@@ -1,5 +1,5 @@
 #include "Tile.h"
-#include <stdio.h>
+#include <sstream>
 #include <map>
 #include "SDLUtils.h"
 #include "Render.h"
@@ -93,39 +93,62 @@ void Tile_UnloadMetaData()
 
 //////////////////////////////////////////////////////////////////////
 
-Tile::Tile(int value)
+int tileSize = 100;
+int gridSpacing = 15;
+
+void calculatePosition(int row, int col, int *pX, int *pY)
 {
-	char buf[10];
-	sprintf(buf, "%d", value);
+	*pX = col * (tileSize + gridSpacing);
+	*pY = row * (tileSize + gridSpacing);
+}
+
+Tile::Tile(int row, int col, int value)
+{
+	std::stringstream buf;
 	Texture numTexture;
-	numTexture.loadFromLatinText(&numFontLarge, buf, tileStyleMap[value].fgColor);
-	printf("height = %d", numTexture.height());
+	buf << value;
+	numTexture.loadFromLatinText(&numFontLarge, buf.str().c_str(), tileStyleMap[value].fgColor);
 
-	int tileWidth = 100;
-	int tileHeight = 100;
-
-	m_texture.createBlank(tileWidth, tileHeight, SDL_TEXTUREACCESS_TARGET);
+	m_texture.createBlank(tileSize, tileSize, SDL_TEXTUREACCESS_TARGET);
+	m_texture.enableAlpha();
 	g_render.setTarget(m_texture.sdl_texture());
 	g_render.setDrawColor(tileStyleMap[value].bgColor);
 	g_render.clear();
-	numTexture.render((tileWidth - numTexture.width()) / 2, (tileHeight - numTexture.height()) / 2);
+	numTexture.render((tileSize - numTexture.width()) / 2, (tileSize - numTexture.height()) / 2);
 	g_render.setTarget(NULL);
 
-	m_x = 0;
-	m_y = 10;
+	m_row = row;
+	m_col = col;
+	calculatePosition(row, col, &m_x, &m_y);
+
+	m_opacity = 1.0;
+	m_scale = 1.0;
 }
 
 void Tile::render()
 {
-	m_texture.render(m_x, m_y);
+	m_texture.setAlpha(static_cast<Uint8>(255 * m_opacity));
+	m_texture.renderScaled(m_x, m_y, m_scale);
 }
 
 void Tile::setProperty(int propertyID, double value)
 {
 	switch(propertyID) {
 	case 1:
-		m_x = value;
+		m_x = static_cast<int>(value);
 		break;
+	case 2:
+		m_y = static_cast<int>(value);
+		break;
+	case 3:
+		m_opacity = value;
+		break;
+	case 4:
+		// [TODO] consider using texture redraw to implement tile scaling
+		m_scale = value;
+		calculatePosition(m_row, m_col, &m_x, &m_y);
+		m_x -= tileSize * (m_scale - 1) / 2;
+		m_y -= tileSize * (m_scale - 1) / 2;
 	}
 }
 

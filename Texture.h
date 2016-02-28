@@ -18,10 +18,11 @@ public:
 	void free();
 
 	void setBlendMode(SDL_BlendMode blending);
-	
+	void enableAlpha() { setBlendMode(SDL_BLENDMODE_BLEND); }
 	void setAlpha(Uint8 alpha);
 
 	void render(int x, int y, SDL_Rect *clip = NULL);
+	void renderScaled(int x, int y, double ratio);
 
 	SDL_Texture *sdl_texture() { return m_texture; }
 	int width() { return m_width; }
