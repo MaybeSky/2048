@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include "SDLUtils.h"
 #include "Tile.h"
+#include "Render.h"
 
-Tile one;
+Tile *one;
 
 void Frame(int delta_ms)
 {
@@ -13,11 +14,11 @@ void Frame(int delta_ms)
 	g_render.drawRect(0, 10, 100, 100);
 	g_render.drawRect(400, 10, 100, 100);
 
-	one.render();
+	one->render();
 
 	g_render.present();
 
-	one.update(delta_ms);
+	one->update(delta_ms);
 }
 
 int main(int argc, char *argv[])
@@ -31,6 +32,10 @@ int main(int argc, char *argv[])
 	if (!InitSDL())
 		return 1;
 
+	Tile_LoadMetaData();
+
+	one = new Tile(64);
+
 	SDL_Event e;
 	Uint32 ticks = SDL_GetTicks();
 	for(;;) {
@@ -38,7 +43,7 @@ int main(int argc, char *argv[])
 			if(e.type == SDL_QUIT)
 				goto quit;
 			else if(e.type == SDL_KEYDOWN)
-				one.attachAnimation(anim1);
+				one->attachAnimation(anim1);
 		}
 
 		Uint32 new_ticks = SDL_GetTicks();
@@ -48,6 +53,8 @@ int main(int argc, char *argv[])
 	}
 
 quit:
+	Tile_UnloadMetaData();
+
 	CloseSDL();
 
 	return 0;

@@ -1,7 +1,10 @@
 #ifndef SdlUtils_h
 #define SdlUtils_h
 
+#include <functional>
 #include <SDL.h>
+#include <SDL_ttf.h>
+#include "Texture.h"
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
@@ -12,44 +15,6 @@ extern void CloseSDL();
 extern const SDL_Color BLACK;
 extern const SDL_Color WHITE;
 
-class Render
-{
-public:
-	void init(SDL_Renderer *renderer) { m_renderer = renderer; }
-
-	void setDrawColor(int r, int g, int b, int a = 255)
-	{
-		SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
-	}
-	void setDrawColor(const SDL_Color &color)
-	{
-		SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-	}
-
-	void clear() { SDL_RenderClear(m_renderer); }
-
-	void drawRect(int x, int y, int w, int h)
-	{
-		SDL_Rect rect = { x, y, w, h };
-		SDL_RenderDrawRect(m_renderer, &rect);
-	}
-
-	void fillRect(int x, int y, int w, int h)
-	{
-		SDL_Rect rect = { x, y, w, h };
-		SDL_RenderFillRect(m_renderer, &rect);
-	}
-
-	void drawLine(int x1, int y1, int x2, int y2)
-	{
-		SDL_RenderDrawLine(m_renderer, x1, y1, x2, y2);
-	}
-
-	void present() { SDL_RenderPresent(m_renderer); }
-
-private:
-	SDL_Renderer *m_renderer;
-};
-extern Render g_render;
+extern SDL_Color Color_Mix(SDL_Color &color1, SDL_Color &color2, double weight);
 
 #endif

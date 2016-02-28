@@ -8,7 +8,10 @@
 * WebKit对cubic-bezier TimingFunction的实现：
 	* [class UnitBezier](https://github.com/WebKit/webkit/blob/67985c34ffc405f69995e8a35f9c38618625c403/Source/WebCore/platform/graphics/UnitBezier.h)
 	* [solveCubicBezierFunction()](https://github.com/WebKit/webkit/blob/9eec3ca633a72d2cf629895a68f4afda1bdcd47c/Source/WebCore/page/animation/AnimationBase.cpp#L58)
+* [SASS中颜色混合函数（mix）的实现](https://github.com/sass/sass/blob/4415d51997bf6c2da7f0b01d2dd9d5925ef9724d/lib/sass/script/functions.rb#L1291)
+* [SASS颜色函数的教程](http://www.w3cplus.com/preprocessor/sass-color-function.html)
 
 ## 此项目
 * [WebKit编码规范](https://webkit.org/code-style-guidelines/)
-
+* [Lazy Foo' Productions - Color Keying](http://lazyfoo.net/tutorials/SDL/10_color_keying/index.php) 此文讲解了Texture类的创建
+* [Lazy Foo' Productions - Render to Texture](http://lazyfoo.net/tutorials/SDL/43_render_to_texture/index.php)
