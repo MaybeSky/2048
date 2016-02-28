@@ -4,6 +4,7 @@
 #include "SDLUtils.h"
 #include "Render.h"
 #include "Font.h"
+#include "Animation.h"
 
 // [TODO] fix text sizes
 
@@ -72,26 +73,29 @@ static void BuildTileStyles()
 	superTileStyle.font = &numFontXSmall;
 }
 
-void Tile_LoadMetaData()
+std::shared_ptr<Animation> tileAppearAnimation;
+std::shared_ptr<Animation> tilePopAnimation;
+
+const int moveTimeInMillis = 100;
+
+void BuildTileAnimations()
 {
-	const char *fontPath = "ClearSans-Bold.ttf";
-	numFontLarge.init(fontPath, 55);
-	numFontMedium.init(fontPath, 45);
-	numFontSmall.init(fontPath, 35);
-	numFontXSmall.init(fontPath, 30);
+	ValueTransition *t;
 
-	BuildTileStyles();
+	tileAppearAnimation = std::make_shared<Animation>(200, TMFUNC_EASE, moveTimeInMillis);
+	t = tileAppearAnimation->createTransition(4);
+	t->add(0, 0.0);
+	t->add(100, 1.0);
+
+	tilePopAnimation = std::make_shared<Animation>(200, TMFUNC_EASE_IN_OUT, moveTimeInMillis);
+	t = tilePopAnimation->createTransition(3);
+	t->add(0, 0.0);
+	t->add(100, 1.0);
+	t = tilePopAnimation->createTransition(4);
+	t->add(0, 0.0);
+	t->add(50, 1.2);
+	t->add(100, 1.0);
 }
-
-void Tile_UnloadMetaData()
-{
-	numFontLarge.free();
-	numFontMedium.free();
-	numFontSmall.free();
-	numFontXSmall.free();
-}
-
-//////////////////////////////////////////////////////////////////////
 
 int tileSize = 100;
 int gridSpacing = 15;
@@ -101,6 +105,54 @@ void calculatePosition(int row, int col, int *pX, int *pY)
 	*pX = col * (tileSize + gridSpacing);
 	*pY = row * (tileSize + gridSpacing);
 }
+
+std::shared_ptr<Animation> Tile_makeMoveAnimation(int row1, int col1, int row2, int col2)
+{
+	int x1, y1, x2, y2;
+	calculatePosition(row1, col1, &x1, &y1);
+	calculatePosition(row2, col2, &x2, &y2);
+
+	auto anim = std::make_shared<Animation>(moveTimeInMillis, TMFUNC_EASE_IN_OUT);
+	if(col1 != col2) {
+		// change x
+		auto t = anim->createTransition(1);
+		t->add(0, x1);
+		t->add(100, x2);
+	}
+	else {
+		// change y
+		auto t = anim->createTransition(2);
+		t->add(0, y1);
+		t->add(100, y2);
+	}
+
+	return anim;
+}
+
+void Tile_LoadMetaData()
+{
+	const char *fontPath = "ClearSans-Bold.ttf";
+	numFontLarge.init(fontPath, 55);
+	numFontMedium.init(fontPath, 45);
+	numFontSmall.init(fontPath, 35);
+	numFontXSmall.init(fontPath, 30);
+
+	BuildTileStyles();
+	BuildTileAnimations();
+}
+
+void Tile_UnloadMetaData()
+{
+	numFontLarge.free();
+	numFontMedium.free();
+	numFontSmall.free();
+	numFontXSmall.free();
+
+	tileAppearAnimation.reset();
+	tilePopAnimation.reset();
+}
+
+//////////////////////////////////////////////////////////////////////
 
 Tile::Tile(int row, int col, int value)
 {
@@ -147,8 +199,8 @@ void Tile::setProperty(int propertyID, double value)
 		// [TODO] consider using texture redraw to implement tile scaling
 		m_scale = value;
 		calculatePosition(m_row, m_col, &m_x, &m_y);
-		m_x -= tileSize * (m_scale - 1) / 2;
-		m_y -= tileSize * (m_scale - 1) / 2;
+		m_x -= static_cast<int>(tileSize * (m_scale - 1) / 2);
+		m_y -= static_cast<int>(tileSize * (m_scale - 1) / 2);
 	}
 }
 

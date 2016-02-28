@@ -8,6 +8,10 @@
 extern void Tile_LoadMetaData();
 extern void Tile_UnloadMetaData();
 
+extern std::shared_ptr<Animation> tileAppearAnimation;
+extern std::shared_ptr<Animation> tilePopAnimation;
+extern std::shared_ptr<Animation> Tile_makeMoveAnimation(int row1, int col1, int row2, int col2);
+
 class Tile : public AnimationTarget
 {
 public:

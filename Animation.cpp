@@ -80,7 +80,11 @@ void AnimationExecutor::progress(int delta_ms)
 	if(!m_alive)
 		return;
 
-	if((m_elapsed += delta_ms) >= m_duration)
+	m_elapsed += delta_ms;
+	if(m_elapsed < 0)
+		return;
+
+	if(m_elapsed >= m_duration)
 		m_alive = false;
 
 	for(auto iter = m_transitions.cbegin(); iter != m_transitions.cend(); iter++) {

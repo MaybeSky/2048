@@ -43,13 +43,14 @@ class Animation
 {
 	friend class AnimationExecutor;
 public:
-	Animation(int duration, TimingFunction timingFunc)
-		: m_duration(duration), m_timingFunc(timingFunc) { }
+	Animation(int duration, TimingFunction timingFunc, int delay = 0)
+		: m_duration(duration), m_timingFunc(timingFunc), m_delay(delay) { }
 	~Animation();
 
 	ValueTransition *createTransition(int propertyID);
 
 private:
+	int m_delay;
 	int m_duration;
 	TimingFunction m_timingFunc;
 	std::vector<ValueTransition *> m_transitions;
@@ -60,7 +61,7 @@ class AnimationExecutor
 public:
 	AnimationExecutor(std::shared_ptr<Animation> animation, AnimationTarget *target)
 		: m_animation(animation),
-	      m_alive(true), m_elapsed(0), m_duration(animation->m_duration),
+		  m_alive(true), m_elapsed(-animation->m_delay), m_duration(animation->m_duration),
 		  m_timingFunc(animation->m_timingFunc),
 		  m_transitions(animation->m_transitions),
 		  m_target(target) { }
