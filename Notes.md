@@ -15,3 +15,5 @@
 * [WebKit编码规范](https://webkit.org/code-style-guidelines/)
 * [Lazy Foo' Productions - Color Keying](http://lazyfoo.net/tutorials/SDL/10_color_keying/index.php) 此文讲解了Texture类的创建
 * [Lazy Foo' Productions - Render to Texture](http://lazyfoo.net/tutorials/SDL/43_render_to_texture/index.php)
+* [Why it is OK to return vector from function? - Stack Overflow](http://stackoverflow.com/questions/22655059/why-it-is-ok-to-return-vector-from-function) C++可以把局部vector的内容move至返回值赋给的vector，避免copy
+* [stl - How do I reverse a C++ vector? - Stack Overflow](http://stackoverflow.com/questions/8877448/how-do-i-reverse-a-c-vector)

@@ -1,40 +1,43 @@
 #include <stdio.h>
+#include <vector>
 #include "SDLUtils.h"
 #include "Tile.h"
 #include "Render.h"
+#include "Game.h"
 
-Tile *one;
+#include <algorithm>
+#include <math.h>
+
+Game g;
 
 void Frame(int delta_ms)
 {
 	g_render.setDrawColor(WHITE);
 	g_render.clear();
 
-	g_render.setDrawColor(BLACK);
-	g_render.drawRect(0, 10, 100, 100);
-	g_render.drawRect(400, 10, 100, 100);
+	auto renderTile = [] (Tile *t) { t->render(); };
+	auto animateTile = [=] (Tile *t) { t->update(delta_ms); };
 
-	one->render();
+	g.forEachTile(renderTile);
 
 	g_render.present();
 
-	one->update(delta_ms);
+	g.forEachTile(animateTile);
 }
 
 int main(int argc, char *argv[])
 {
-	auto anim1 = std::make_shared<Animation>(500, TMFUNC_EASE);
-	auto t1 = anim1->createTransition(1);
-	t1->add(0, 0.0);
-	t1->add(50, 1.2 * 400);
-	t1->add(100, 400.0);
-
 	if (!InitSDL())
 		return 1;
 
+	g.init(4);
+
 	Tile_LoadMetaData();
 
-	one = new Tile(64);
+	// g.test1();
+
+	g.addRandomTile();
+	g.addRandomTile();
 
 	SDL_Event e;
 	Uint32 ticks = SDL_GetTicks();
@@ -42,8 +45,22 @@ int main(int argc, char *argv[])
 		while(SDL_PollEvent(&e)) {
 			if(e.type == SDL_QUIT)
 				goto quit;
-			else if(e.type == SDL_KEYDOWN)
-				one->attachAnimation(anim1);
+			else if(e.type == SDL_KEYDOWN) {
+				switch(e.key.keysym.sym) {
+				case SDLK_UP:
+					g.move(UP);
+					break;
+				case SDLK_RIGHT:
+					g.move(RIGHT);
+					break;
+				case SDLK_DOWN:
+					g.move(DOWN);
+					break;
+				case SDLK_LEFT:
+					g.move(LEFT);
+					break;
+				}
+			}
 		}
 
 		Uint32 new_ticks = SDL_GetTicks();
@@ -53,6 +70,7 @@ int main(int argc, char *argv[])
 	}
 
 quit:
+
 	Tile_UnloadMetaData();
 
 	CloseSDL();

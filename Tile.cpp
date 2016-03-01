@@ -172,15 +172,27 @@ Tile::Tile(int row, int col, int value)
 	m_row = row;
 	m_col = col;
 	calculatePosition(row, col, &m_x, &m_y);
+	m_value = value;
 
 	m_opacity = 1.0;
 	m_scale = 1.0;
+
+	m_mergedFrom1 = m_mergedFrom2 = nullptr;
+}
+
+void renderTile(Tile *tile)
+{
+	tile->m_texture.setAlpha(static_cast<Uint8>(255 * tile->m_opacity));
+	tile->m_texture.renderScaled(tile->m_x, tile->m_y, tile->m_scale);
 }
 
 void Tile::render()
 {
-	m_texture.setAlpha(static_cast<Uint8>(255 * m_opacity));
-	m_texture.renderScaled(m_x, m_y, m_scale);
+	if(hasMergedFrom()) {
+		renderTile(m_mergedFrom1);
+		renderTile(m_mergedFrom2);
+	}
+	renderTile(this);
 }
 
 void Tile::setProperty(int propertyID, double value)
@@ -204,10 +216,19 @@ void Tile::setProperty(int propertyID, double value)
 	}
 }
 
+void updateTile(Tile *tile, int delta_ms)
+{
+	if(tile->m_animationExecutor) {
+		tile->m_animationExecutor->progress(delta_ms);
+	}
+}
+
 void Tile::update(int delta_ms)
 {
-	if(m_animationExecutor) {
-		m_animationExecutor->progress(delta_ms);
+	updateTile(this, delta_ms);
+	if(hasMergedFrom()) {
+		updateTile(m_mergedFrom1, delta_ms);
+		updateTile(m_mergedFrom2, delta_ms);
 	}
 }
 
@@ -215,4 +236,11 @@ void Tile::attachAnimation(std::shared_ptr<Animation> animation)
 {
 	m_animationExecutor = std::make_shared<AnimationExecutor>(animation, this);
 	m_animationExecutor->init();
+}
+
+void Tile::planMovement(const Vector &v)
+{
+	attachAnimation(Tile_makeMoveAnimation(m_row, m_col, v.row, v.col));
+	m_row = v.row;
+	m_col = v.col;
 }
