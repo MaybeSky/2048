@@ -23,6 +23,8 @@ void Game::init(int size)
 	std::fill(m_cells, m_cells + len, nullptr);
 
 	m_random_engine.seed(static_cast<unsigned long>(time(nullptr)));
+
+	m_gameOver = false;
 }
 
 std::vector<int> Game::getAvailableCells()
@@ -155,7 +157,43 @@ void Game::move(Dir dir)
 
 	if(moved) {
 		addRandomTile();
+
+		if(!movesAvailable())
+			m_gameOver = true;
 	}
+}
+
+bool Game::movesAvailable()
+{
+	auto begin = m_cells;
+	auto end = m_cells + m_size * m_size;
+	if(std::find(begin, end, nullptr) != end)
+		return true;
+
+	static int vectors[4][2] =
+	{
+		{ -1,  0 }, // up
+		{  1,  0 }, // down
+		{  0, -1 }, // left
+		{  0,  1 }, // right
+	};
+	auto withInBounds = [this] (int row, int col) {
+		return row >= 0 && col >= 0 && row < m_size && col < m_size;
+	};
+	for(int i = 0; i < m_size * m_size; i++) {
+		int row = i / m_size;
+		int col = i % m_size;
+		for(int j = 0; j < 4; j++) {
+			int row2 = row + vectors[j][0];
+			int col2 = col + vectors[j][1];
+			if(!withInBounds(row2, col2))
+				continue;
+			if(m_cells[i]->value() == m_cells[row2 * m_size + col2]->value())
+				return true;
+		}
+	}
+
+	return false;
 }
 
 void Game::test1()

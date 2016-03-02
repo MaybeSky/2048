@@ -27,15 +27,17 @@ public:
 	void test1();
 	void test2();
 
+	bool gameOver() { return m_gameOver; }
 private:
 	std::default_random_engine m_random_engine;
 	int m_size;
 	Tile **m_cells;
+	bool m_gameOver;
 
 	std::vector<int> getAvailableCells();
+	bool movesAvailable();
 	void fill(Dir dir, int a, int b, int *pRow, int *pCol);
 	void reduce(const std::vector<int> &mapping, bool *pMoved);
-	void moveTile(Tile *tile, Vector pos) { /* todo */ }
 };
 
 #endif
