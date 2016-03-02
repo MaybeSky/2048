@@ -8,7 +8,8 @@
 
 enum Dir
 {
-	UP, RIGHT, DOWN, LEFT
+	/* do not change the order here */
+	UP, DOWN, LEFT, RIGHT
 };
 
 class Game
@@ -31,15 +32,9 @@ private:
 	int m_size;
 	Tile **m_cells;
 
-	Tile *&refCell(int row, int col) { return m_cells[row * m_size + col]; }
-	bool withInBounds(int row, int col) {
-		return row >= 0 && col >= 0 && row < m_size && col < m_size;
-	}
-	std::vector<Vector> getAvailableCells();
-	Vector getVector(Dir dir);
-	void buildTraversals(Vector vec, std::vector<int> &rowTraversals, std::vector<int> &colTraversals);
-	void findFarthestPosition(int rowFrom, int colFrom, Vector dirVec,
-		Vector &farthest, Vector &next);
+	std::vector<int> getAvailableCells();
+	void fill(Dir dir, int a, int b, int *pRow, int *pCol);
+	void reduce(const std::vector<int> &mapping, bool *pMoved);
 	void moveTile(Tile *tile, Vector pos) { /* todo */ }
 };
 

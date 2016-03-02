@@ -34,8 +34,6 @@ int main(int argc, char *argv[])
 
 	Tile_LoadMetaData();
 
-	// g.test1();
-
 	g.addRandomTile();
 	g.addRandomTile();
 

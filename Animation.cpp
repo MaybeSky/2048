@@ -93,3 +93,9 @@ void AnimationExecutor::progress(int delta_ms)
 			(*iter)->calculate(m_elapsed, m_duration, m_timingFunc));
 	}
 }
+
+void AnimationExecutor::end()
+{
+	m_elapsed = 0;
+	progress(m_duration);
+}

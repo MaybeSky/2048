@@ -65,9 +65,11 @@ public:
 		  m_timingFunc(animation->m_timingFunc),
 		  m_transitions(animation->m_transitions),
 		  m_target(target) { }
+	~AnimationExecutor() { end(); }
 
 	void init();
 	void progress(int delta_ms);
+	void end();
 
 private:
 	std::shared_ptr<Animation> m_animation;
