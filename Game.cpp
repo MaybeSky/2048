@@ -2,6 +2,7 @@
 #include <ctime>
 #include <utility> // move
 #include <algorithm> // fill
+#include "Render.h"
 
 Game::Game()
 {
@@ -10,8 +11,7 @@ Game::Game()
 
 Game::~Game()
 {
-	if(m_cells)
-		delete m_cells;
+
 }
 
 void Game::init(int size)
@@ -25,6 +25,20 @@ void Game::init(int size)
 	m_random_engine.seed(static_cast<unsigned long>(time(nullptr)));
 
 	m_gameOver = false;
+
+	m_score = 0;
+	m_bestScore = 100;
+	m_curScoreBoard = new ScoreBoard("SCORE", 0);
+	m_bestScoreBoard = new ScoreBoard("BEST", 100);
+}
+
+void Game::quit()
+{
+	if(m_cells)
+		delete m_cells;
+
+	delete m_curScoreBoard;
+	delete m_bestScoreBoard;
 }
 
 std::vector<int> Game::getAvailableCells()
@@ -117,6 +131,14 @@ void Game::reduce(const std::vector<int> &mapping, bool *pMoved)
 			m_cells[mapping[first]] = nullptr;
 			prevMerged = true;
 			moved = true;
+
+			// add score
+			m_score += m->value();
+			m_curScoreBoard->updateScore(m_score);
+			if(m_score > m_bestScore) {
+				m_bestScore = m_score;
+				m_bestScoreBoard->updateScore(m_bestScore);
+			}
 		}
 		else
 		{
@@ -194,6 +216,43 @@ bool Game::movesAvailable()
 	}
 
 	return false;
+}
+
+void Game::renderTileBoard(int x, int y)
+{
+	// [TODO] refactor
+	int tileSize = 100;
+	int gridSpacing = 15;
+
+	const int gridsSize = tileSize * m_size + gridSpacing * (m_size + 1);
+	g_render.setDrawColor(0xBB, 0xAD, 0xA0);
+	g_render.fillRect(x, y, gridsSize, gridsSize);
+
+	Texture holder;
+	holder.createBlank(tileSize, tileSize, SDL_TEXTUREACCESS_TARGET);
+	holder.enableAlpha();
+	g_render.setTarget(holder.sdl_texture());
+	g_render.setDrawColor(238, 228, 218, static_cast<int>(0.35 * 255));
+	g_render.clear();
+	g_render.setTarget(nullptr);
+
+	for(int row = 0; row < m_size; row++) {
+		for(int col = 0; col < m_size; col++) {
+			holder.render(
+				x + gridSpacing + col * (tileSize + gridSpacing),
+				y + gridSpacing + row * (tileSize + gridSpacing));
+		}
+	}
+
+	auto renderTile = [&] (Tile *t) { t->render(x + gridSpacing, y + gridSpacing); };
+	forEachTile(renderTile);
+
+}
+
+void Game::update(int delta_ms)
+{
+	auto animateTile = [=] (Tile *t) { t->update(delta_ms); };
+	forEachTile(animateTile);
 }
 
 void Game::test1()

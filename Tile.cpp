@@ -180,19 +180,19 @@ Tile::Tile(int row, int col, int value)
 	m_mergedFrom1 = m_mergedFrom2 = nullptr;
 }
 
-void renderTile(Tile *tile)
+void renderTile(Tile *tile, int x, int y)
 {
 	tile->m_texture.setAlpha(static_cast<Uint8>(255 * tile->m_opacity));
-	tile->m_texture.renderScaled(tile->m_x, tile->m_y, tile->m_scale);
+	tile->m_texture.renderScaled(x + tile->m_x, y + tile->m_y, tile->m_scale);
 }
 
-void Tile::render()
+void Tile::render(int x, int y)
 {
 	if(hasMergedFrom()) {
-		renderTile(m_mergedFrom1);
-		renderTile(m_mergedFrom2);
+		renderTile(m_mergedFrom1, x, y);
+		renderTile(m_mergedFrom2, x, y);
 	}
-	renderTile(this);
+	renderTile(this, x, y);
 }
 
 void Tile::setProperty(int propertyID, double value)

@@ -12,7 +12,7 @@ class Render
 public:
 	void init(SDL_Renderer *renderer);
 
-	void setDrawColor(int r, int g, int b, int a);
+	void setDrawColor(int r, int g, int b, int a = 255);
 	void setDrawColor(const SDL_Color &color);
 	void clear();
 	void drawRect(int x, int y, int w, int h);

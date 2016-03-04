@@ -31,7 +31,7 @@ class Tile : public AnimationTarget
 {
 public:
 	explicit Tile(int row, int col, int value);
-	void render();
+	void render(int x, int y);
 	void update(int delta_ms);
 	virtual void setProperty(int propertyID, double value) override;
 	void attachAnimation(std::shared_ptr<Animation> animation);
@@ -64,7 +64,7 @@ private:
 	Texture m_texture;
 	Tile *m_mergedFrom1, *m_mergedFrom2;
 
-	friend void renderTile(Tile *tile);
+	friend void renderTile(Tile *tile, int x, int y);
 	friend void updateTile(Tile *tile, int delta_ms);
 };
 

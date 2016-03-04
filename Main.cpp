@@ -15,14 +15,13 @@ void Frame(int delta_ms)
 	g_render.setDrawColor(WHITE);
 	g_render.clear();
 
-	auto renderTile = [] (Tile *t) { t->render(); };
-	auto animateTile = [=] (Tile *t) { t->update(delta_ms); };
-
-	g.forEachTile(renderTile);
+	g.renderTileBoard(2, 2);
+	g.m_curScoreBoard->render(480, 0);
+	g.m_bestScoreBoard->render(480, 80);
 
 	g_render.present();
 
-	g.forEachTile(animateTile);
+	g.update(delta_ms);
 }
 
 int main(int argc, char *argv[])
@@ -70,6 +69,8 @@ int main(int argc, char *argv[])
 quit:
 
 	Tile_UnloadMetaData();
+
+	g.quit();
 
 	CloseSDL();
 
