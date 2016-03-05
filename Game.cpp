@@ -28,8 +28,12 @@ void Game::init(int size)
 
 	m_score = 0;
 	m_bestScore = 100;
-	m_curScoreBoard = new ScoreBoard("SCORE", 0);
-	m_bestScoreBoard = new ScoreBoard("BEST", 100);
+	m_curScoreBoard = new ScoreBoard("SCORE", m_score);
+	m_bestScoreBoard = new ScoreBoard("BEST", m_bestScore);
+	m_tileBoard = new TileBoard(this);
+
+	addRandomTile();
+	addRandomTile();
 }
 
 void Game::quit()
@@ -39,6 +43,7 @@ void Game::quit()
 
 	delete m_curScoreBoard;
 	delete m_bestScoreBoard;
+	delete m_tileBoard;
 }
 
 std::vector<int> Game::getAvailableCells()
@@ -175,13 +180,10 @@ void Game::move(Dir dir)
 
 	if(moved) {
 		if(deltaScore > 0) {
-			m_scoreAddition = std::make_shared<ScoreAddition>(deltaScore);
 			m_score += deltaScore;
-			m_curScoreBoard->updateScore(m_score);
-			if(m_score > m_bestScore) {
+			m_scoreAddition = std::make_shared<ScoreAddition>(deltaScore);
+			if(m_score > m_bestScore)
 				m_bestScore = m_score;
-				m_bestScoreBoard->updateScore(m_bestScore);
-			}
 		}
 
 		addRandomTile();
@@ -234,36 +236,8 @@ void Game::render()
 			m_curScoreBoard->x() + (m_curScoreBoard->width() - m_scoreAddition->width()) / 2,
 			m_curScoreBoard->y() + m_curScoreBoard->height() - m_scoreAddition->height() - 2);
 	}
-}
 
-void Game::renderTileBoard(int x, int y)
-{
-	// [TODO] refactor
-	int tileSize = 100;
-	int gridSpacing = 15;
-
-	const int gridsSize = tileSize * m_size + gridSpacing * (m_size + 1);
-	g_render.setDrawColor(0xBB, 0xAD, 0xA0);
-	g_render.fillRect(x, y, gridsSize, gridsSize);
-
-	Texture holder;
-	holder.createBlank(tileSize, tileSize, SDL_TEXTUREACCESS_TARGET);
-	holder.enableAlpha();
-	g_render.setTarget(holder.sdl_texture());
-	g_render.setDrawColor(238, 228, 218, static_cast<int>(0.35 * 255));
-	g_render.clear();
-	g_render.setTarget(nullptr);
-
-	for(int row = 0; row < m_size; row++) {
-		for(int col = 0; col < m_size; col++) {
-			holder.render(
-				x + gridSpacing + col * (tileSize + gridSpacing),
-				y + gridSpacing + row * (tileSize + gridSpacing));
-		}
-	}
-
-	auto renderTile = [&] (Tile *t) { t->render(x + gridSpacing, y + gridSpacing); };
-	forEachTile(renderTile);
+	m_tileBoard->render();
 }
 
 void Game::update(int delta_ms)
@@ -273,13 +247,4 @@ void Game::update(int delta_ms)
 
 	if(m_scoreAddition)
 		m_scoreAddition->update(delta_ms);
-}
-
-void Game::test1()
-{
-}
-
-void Game::test2()
-{
-
 }

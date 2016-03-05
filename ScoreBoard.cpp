@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 
-ScoreBoard::ScoreBoard(const char *title, int score)
+ScoreBoard::ScoreBoard(const char *title, int &score)
 	: m_title(title),
 	  m_score(score)
 {

@@ -8,6 +8,7 @@
 #include <memory>
 #include "ScoreBoard.h"
 #include "ScoreAddition.h"
+#include "TileBoard.h"
 
 enum Dir
 {
@@ -22,24 +23,18 @@ public:
 	~Game();
 	void init(int size);
 	void quit();
-	void addRandomTile();
-	void forEachTile(std::function<void (Tile *)> callback);
 	void move(Dir dir);
 
 	void render();
-	void renderTileBoard(int x, int y);
 	void update(int delta_ms);
 
-	friend void debugPrintGrids(Game *g);
-
-	void test1();
-	void test2();
+	ScoreBoard *curScoreBoard() { return m_curScoreBoard; }
+	ScoreBoard *bestScoreBoard() { return m_bestScoreBoard; }
+	TileBoard *tileBoard() { return m_tileBoard; }
 
 	bool gameOver() { return m_gameOver; }
 
-	ScoreBoard *m_curScoreBoard;
-	ScoreBoard *m_bestScoreBoard;
-	std::shared_ptr<ScoreAddition> m_scoreAddition;
+	friend void debugPrintGrids(Game *g);
 private:
 	std::default_random_engine m_random_engine;
 	int m_size;
@@ -47,9 +42,17 @@ private:
 	bool m_gameOver;
 	int m_score;
 	int m_bestScore;
+	
+	ScoreBoard *m_curScoreBoard;
+	ScoreBoard *m_bestScoreBoard;
+	std::shared_ptr<ScoreAddition> m_scoreAddition;
+	friend class TileBoard;
+	TileBoard *m_tileBoard;
 
 	std::vector<int> getAvailableCells();
+	void addRandomTile();
 	bool movesAvailable();
+	void forEachTile(std::function<void (Tile *)> callback);
 	void fill(Dir dir, int a, int b, int *pRow, int *pCol);
 	void reduce(const std::vector<int> &mapping, bool *pMoved, int *pDeltaScore);
 };

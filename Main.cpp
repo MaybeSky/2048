@@ -17,7 +17,6 @@ void Frame(int delta_ms)
 	g_render.clear();
 
 	g.render();
-	g.renderTileBoard(2, 2);
 
 	g_render.present();
 
@@ -29,16 +28,14 @@ int main(int argc, char *argv[])
 	if (!InitSDL())
 		return 1;
 
-	g.init(4);
-
 	Tile_LoadMetaData();
 	ScoreAddition_loadMetaData();
 
-	g.m_curScoreBoard->setXY(480, 20);
-	g.m_bestScoreBoard->setXY(480, 100);
+	g.init(4);
 
-	g.addRandomTile();
-	g.addRandomTile();
+	g.curScoreBoard()->setXY(480, 20);
+	g.bestScoreBoard()->setXY(480, 100);
+	g.tileBoard()->setXY(2, 2);
 
 	SDL_Event e;
 	Uint32 ticks = SDL_GetTicks();
@@ -72,10 +69,10 @@ int main(int argc, char *argv[])
 
 quit:
 
+	g.quit();
+
 	ScoreAddition_unloadMetaData();
 	Tile_UnloadMetaData();
-
-	g.quit();
 
 	CloseSDL();
 

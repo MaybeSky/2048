@@ -7,9 +7,8 @@
 class ScoreBoard
 {
 public:
-	explicit ScoreBoard(const char *title, int score);
+	explicit ScoreBoard(const char *title, int &score);
 	void render();
-	void updateScore(int newScore) { m_score = newScore; }
 
 	int x() { return m_x; }
 	int y() { return m_y; }
@@ -21,7 +20,7 @@ private:
 	int m_x;
 	int m_y;
 	const char *m_title;
-	int m_score;
+	int &m_score;
 	Font m_numberFont;
 	Font m_titleFont;
 };
