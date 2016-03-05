@@ -82,6 +82,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Render.cpp" />
+    <ClCompile Include="ScoreAddition.cpp" />
     <ClCompile Include="ScoreBoard.cpp" />
     <ClCompile Include="SDLUtils.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Render.h" />
+    <ClInclude Include="ScoreAddition.h" />
     <ClInclude Include="ScoreBoard.h" />
     <ClInclude Include="SDLUtils.h" />
     <ClInclude Include="Texture.h" />

@@ -97,7 +97,7 @@ void Game::fill(Dir dir, int a, int b, int *pRow, int *pCol)
 		*pRow = b, *pCol = a;
 }
 
-void Game::reduce(const std::vector<int> &mapping, bool *pMoved)
+void Game::reduce(const std::vector<int> &mapping, bool *pMoved, int *pDeltaScore)
 {
 	bool moved = false;
 	int n = -1; // fill pointer
@@ -133,12 +133,7 @@ void Game::reduce(const std::vector<int> &mapping, bool *pMoved)
 			moved = true;
 
 			// add score
-			m_score += m->value();
-			m_curScoreBoard->updateScore(m_score);
-			if(m_score > m_bestScore) {
-				m_bestScore = m_score;
-				m_bestScoreBoard->updateScore(m_bestScore);
-			}
+			*pDeltaScore += m->value();
 		}
 		else
 		{
@@ -162,6 +157,7 @@ void Game::move(Dir dir)
 	forEachTile([] (Tile *tile) { tile->clearMergedFrom(); });
 
 	bool moved = false;
+	int deltaScore = 0;
 
 	std::vector<int> mapping;
 
@@ -173,11 +169,21 @@ void Game::move(Dir dir)
 			mapping.push_back(row * m_size + col);
 		}
 		bool m;
-		reduce(mapping, &m);
+		reduce(mapping, &m, &deltaScore);
 		moved |= m;
 	}
 
 	if(moved) {
+		if(deltaScore > 0) {
+			m_scoreAddition = std::make_shared<ScoreAddition>(deltaScore);
+			m_score += deltaScore;
+			m_curScoreBoard->updateScore(m_score);
+			if(m_score > m_bestScore) {
+				m_bestScore = m_score;
+				m_bestScoreBoard->updateScore(m_bestScore);
+			}
+		}
+
 		addRandomTile();
 
 		if(!movesAvailable())
@@ -218,6 +224,18 @@ bool Game::movesAvailable()
 	return false;
 }
 
+void Game::render()
+{
+	m_bestScoreBoard->render();
+	m_curScoreBoard->render();
+
+	if(m_scoreAddition) {
+		m_scoreAddition->render(
+			m_curScoreBoard->x() + (m_curScoreBoard->width() - m_scoreAddition->width()) / 2,
+			m_curScoreBoard->y() + m_curScoreBoard->height() - m_scoreAddition->height() - 2);
+	}
+}
+
 void Game::renderTileBoard(int x, int y)
 {
 	// [TODO] refactor
@@ -246,13 +264,15 @@ void Game::renderTileBoard(int x, int y)
 
 	auto renderTile = [&] (Tile *t) { t->render(x + gridSpacing, y + gridSpacing); };
 	forEachTile(renderTile);
-
 }
 
 void Game::update(int delta_ms)
 {
 	auto animateTile = [=] (Tile *t) { t->update(delta_ms); };
 	forEachTile(animateTile);
+
+	if(m_scoreAddition)
+		m_scoreAddition->update(delta_ms);
 }
 
 void Game::test1()

@@ -17,3 +17,7 @@
 * [Lazy Foo' Productions - Render to Texture](http://lazyfoo.net/tutorials/SDL/43_render_to_texture/index.php)
 * [Why it is OK to return vector from function? - Stack Overflow](http://stackoverflow.com/questions/22655059/why-it-is-ok-to-return-vector-from-function) C++可以把局部vector的内容move至返回值赋给的vector，避免copy
 * [stl - How do I reverse a C++ vector? - Stack Overflow](http://stackoverflow.com/questions/8877448/how-do-i-reverse-a-c-vector)
+### 分析
+* __游戏对象__指能渲染到屏幕上的实体。
+* 虽然违反了OO设计的*单一职责原则*，但我发现把游戏对象的数据、它的绘制（render）和更新（update）放进同一个类是很自然方便的选择。
+* 游戏对象可分为两类，一类是静态对象：它们有自己相对窗口的位置，运行时，位置不改变，如ScoreBoard；另一类是动态对象，支持动画，它们的位置是相对于给定原点的，其位置由自身控制，不暴露给外部，渲染此类对象时要指定原点，如Tile和ScoreAddition。

@@ -2,6 +2,7 @@
 #include <vector>
 #include "SDLUtils.h"
 #include "Tile.h"
+#include "ScoreAddition.h"
 #include "Render.h"
 #include "Game.h"
 
@@ -15,9 +16,8 @@ void Frame(int delta_ms)
 	g_render.setDrawColor(WHITE);
 	g_render.clear();
 
+	g.render();
 	g.renderTileBoard(2, 2);
-	g.m_curScoreBoard->render(480, 0);
-	g.m_bestScoreBoard->render(480, 80);
 
 	g_render.present();
 
@@ -32,6 +32,10 @@ int main(int argc, char *argv[])
 	g.init(4);
 
 	Tile_LoadMetaData();
+	ScoreAddition_loadMetaData();
+
+	g.m_curScoreBoard->setXY(480, 20);
+	g.m_bestScoreBoard->setXY(480, 100);
 
 	g.addRandomTile();
 	g.addRandomTile();
@@ -68,6 +72,7 @@ int main(int argc, char *argv[])
 
 quit:
 
+	ScoreAddition_unloadMetaData();
 	Tile_UnloadMetaData();
 
 	g.quit();

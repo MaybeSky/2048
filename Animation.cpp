@@ -2,6 +2,8 @@
 #include "Animation.h"
 
 static UnitBezier bezier_ease(0.25, 0.1, 0.25, 1.0);
+static UnitBezier bezier_easeIn(0.42, 0.0, 1.0, 1.0);
+static UnitBezier bezier_easeOut(0.0, 0.0, 0.58, 1.0);
 static UnitBezier bezier_easeInOut(0.42, 0.0, 0.58, 1.0);
 
 inline double interploate(double from, double to, double ratio)
@@ -16,6 +18,10 @@ inline double timing(TimingFunction timingFunc, int duration, double input)
 		return input;
 	case TMFUNC_EASE:
 		return bezier_ease.solve(input, duration);
+	case TMFUNC_EASE_IN:
+		return bezier_easeIn.solve(input, duration);
+	case TMFUNC_EASE_OUT:
+		return bezier_easeOut.solve(input, duration);
 	case TMFUNC_EASE_IN_OUT:
 		return bezier_easeInOut.solve(input, duration);
 	default:

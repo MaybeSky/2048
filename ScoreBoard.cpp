@@ -11,7 +11,7 @@ ScoreBoard::ScoreBoard(const char *title, int score)
 	m_numberFont.init("ClearSans-Bold.ttf", 36);
 }
 
-void ScoreBoard::render(int x, int y)
+void ScoreBoard::render()
 {
 	Texture texture;
 	texture.createBlank(width(), height(), SDL_TEXTUREACCESS_TARGET);
@@ -34,5 +34,5 @@ void ScoreBoard::render(int x, int y)
 
 	g_render.setTarget(nullptr);
 
-	texture.render(x, y);
+	texture.render(m_x, m_y);
 }

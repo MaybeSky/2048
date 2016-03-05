@@ -5,7 +5,9 @@
 #include <vector>
 #include <functional>
 #include <random>
+#include <memory>
 #include "ScoreBoard.h"
+#include "ScoreAddition.h"
 
 enum Dir
 {
@@ -24,6 +26,7 @@ public:
 	void forEachTile(std::function<void (Tile *)> callback);
 	void move(Dir dir);
 
+	void render();
 	void renderTileBoard(int x, int y);
 	void update(int delta_ms);
 
@@ -36,7 +39,7 @@ public:
 
 	ScoreBoard *m_curScoreBoard;
 	ScoreBoard *m_bestScoreBoard;
-
+	std::shared_ptr<ScoreAddition> m_scoreAddition;
 private:
 	std::default_random_engine m_random_engine;
 	int m_size;
@@ -48,7 +51,7 @@ private:
 	std::vector<int> getAvailableCells();
 	bool movesAvailable();
 	void fill(Dir dir, int a, int b, int *pRow, int *pCol);
-	void reduce(const std::vector<int> &mapping, bool *pMoved);
+	void reduce(const std::vector<int> &mapping, bool *pMoved, int *pDeltaScore);
 };
 
 #endif
