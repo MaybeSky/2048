@@ -14,6 +14,8 @@ public:
 	void render();
 
 	void setXY(int x, int y) { m_x = x; m_y = y; }
+	int width();
+	int height() { return width(); }
 
 private:
 	Game *m_pGame;

@@ -5,8 +5,8 @@
 #include <SDL_ttf.h>
 #include "Render.h"
 
-extern const int SCREEN_WIDTH = 640;
-extern const int SCREEN_HEIGHT = 480;
+extern const int SCREEN_WIDTH = 700;
+extern const int SCREEN_HEIGHT = 640;
 
 static SDL_Window *g_window = NULL;
 static SDL_Renderer *g_renderer = NULL;
@@ -25,7 +25,7 @@ bool InitSDL()
 		}
 
 		g_window = SDL_CreateWindow(
-			"SDL Tutorial",
+			"2048",
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			SCREEN_WIDTH, SCREEN_HEIGHT,
 			SDL_WINDOW_SHOWN);

@@ -37,14 +37,21 @@ int main(int argc, char *argv[])
 	ScoreAddition_loadMetaData();
 	Button_loadMetaData();
 
-	newGameBtn = new Button("New Game", [] { g.restart(); });
-	newGameBtn->setXY(480, 200);
-
 	g.init(4);
 
-	g.curScoreBoard()->setXY(480, 20);
-	g.bestScoreBoard()->setXY(480, 100);
-	g.tileBoard()->setXY(2, 2);
+	newGameBtn = new Button("New Game", [] { g.restart(); });
+	newGameBtn->setXY((SCREEN_WIDTH - g.tileBoard()->width()) / 2, 35);
+
+	g.setCopyrightXY(
+		(SCREEN_WIDTH - g.copyrightTexture()->width()) / 2,
+		(SCREEN_HEIGHT - g.copyrightTexture()->height()));
+	g.tileBoard()->setXY((SCREEN_WIDTH - g.tileBoard()->width()) / 2 , 100);
+	g.curScoreBoard()->setXY(
+		(SCREEN_WIDTH - g.tileBoard()->width()) / 2 + g.tileBoard()->width() - g.curScoreBoard()->width() - g.bestScoreBoard()->width() - 20,
+		20);
+	g.bestScoreBoard()->setXY(
+		(SCREEN_WIDTH - g.tileBoard()->width()) / 2 + g.tileBoard()->width() - g.curScoreBoard()->width(),
+		20);
 
 	SDL_Event e;
 	Uint32 ticks = SDL_GetTicks();

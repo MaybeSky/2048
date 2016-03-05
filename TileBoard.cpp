@@ -28,6 +28,13 @@ TileBoard::TileBoard(Game *pGame)
 {
 }
 
+int TileBoard::width()
+{
+	// [TODO] refactor
+	const int gridsSize = tileSize * m_pGame->m_size + gridSpacing * (m_pGame->m_size + 1);
+	return gridsSize;
+}
+
 void TileBoard::render()
 {
 	const int gridsSize = tileSize * m_pGame->m_size + gridSpacing * (m_pGame->m_size + 1);
@@ -51,7 +58,7 @@ void TileBoard::render()
 		}
 	}
 
-	auto renderTile = [&] (Tile *t) { t->render(m_x + gridSpacing, m_x + gridSpacing); };
+	auto renderTile = [&] (Tile *t) { t->render(m_x + gridSpacing, m_y + gridSpacing); };
 	m_pGame->forEachTile(renderTile);
 
 	if(m_pGame->gameOver()) {

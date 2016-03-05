@@ -33,6 +33,9 @@ public:
 	ScoreBoard *bestScoreBoard() { return m_bestScoreBoard; }
 	TileBoard *tileBoard() { return m_tileBoard; }
 
+	void setCopyrightXY(int x, int y) { m_copyrightX = x; m_copyrightY = y; }
+	Texture *copyrightTexture() { return &m_copyrightTexture; }
+
 	bool gameOver() { return m_gameOver; }
 
 	friend void debugPrintGrids(Game *g);
@@ -44,6 +47,10 @@ private:
 	int m_score;
 	int m_bestScore;
 	
+	int m_copyrightX;
+	int m_copyrightY;
+	Texture m_copyrightTexture;
+
 	ScoreBoard *m_curScoreBoard;
 	ScoreBoard *m_bestScoreBoard;
 	friend class TileBoard;

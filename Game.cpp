@@ -7,6 +7,8 @@
 Game::Game()
 {
 	m_cells = nullptr;
+	m_copyrightX = 0;
+	m_copyrightY = 0;
 }
 
 Game::~Game()
@@ -16,6 +18,11 @@ Game::~Game()
 
 void Game::init(int size)
 {
+	Font font;
+	font.init("Bell.ttf", 18);
+	m_copyrightTexture.loadFromLatinText(&font, "(copyleft) kbridge@github 2016", BLACK);
+	font.free();
+
 	m_size = size;
 
 	int len = size * size;
@@ -46,6 +53,8 @@ void Game::quit()
 	delete m_curScoreBoard;
 	delete m_bestScoreBoard;
 	delete m_tileBoard;
+
+	m_copyrightTexture.free();
 }
 
 void Game::restart()
@@ -245,6 +254,8 @@ bool Game::movesAvailable()
 
 void Game::render()
 {
+	m_copyrightTexture.render(m_copyrightX, m_copyrightY);
+
 	m_bestScoreBoard->render();
 	m_curScoreBoard->render();
 
