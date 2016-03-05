@@ -3,6 +3,9 @@
 
 #include "Tile.h"
 
+extern void TileBoard_loadMetaData();
+extern void TileBoard_unloadMetaData();
+
 class Game;
 class TileBoard
 {

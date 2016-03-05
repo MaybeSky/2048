@@ -5,11 +5,13 @@
 #include "ScoreAddition.h"
 #include "Render.h"
 #include "Game.h"
+#include "Button.h"
 
 #include <algorithm>
 #include <math.h>
 
 Game g;
+Button *newGameBtn;
 
 void Frame(int delta_ms)
 {
@@ -17,10 +19,12 @@ void Frame(int delta_ms)
 	g_render.clear();
 
 	g.render();
+	newGameBtn->render();
 
 	g_render.present();
 
 	g.update(delta_ms);
+	newGameBtn->update(delta_ms);
 }
 
 int main(int argc, char *argv[])
@@ -29,7 +33,12 @@ int main(int argc, char *argv[])
 		return 1;
 
 	Tile_LoadMetaData();
+	TileBoard_loadMetaData();
 	ScoreAddition_loadMetaData();
+	Button_loadMetaData();
+
+	newGameBtn = new Button("New Game", [] { g.restart(); });
+	newGameBtn->setXY(480, 200);
 
 	g.init(4);
 
@@ -41,6 +50,8 @@ int main(int argc, char *argv[])
 	Uint32 ticks = SDL_GetTicks();
 	for(;;) {
 		while(SDL_PollEvent(&e)) {
+			newGameBtn->handleEvent(e);
+
 			if(e.type == SDL_QUIT)
 				goto quit;
 			else if(e.type == SDL_KEYDOWN) {
@@ -71,7 +82,11 @@ quit:
 
 	g.quit();
 
+	free(newGameBtn);
+
+	Button_unloadMetaData();
 	ScoreAddition_unloadMetaData();
+	TileBoard_unloadMetaData();
 	Tile_UnloadMetaData();
 
 	CloseSDL();

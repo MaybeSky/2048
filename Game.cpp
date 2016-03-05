@@ -38,12 +38,26 @@ void Game::init(int size)
 
 void Game::quit()
 {
+	forEachTile([] (Tile *tile) { delete tile; });
+
 	if(m_cells)
-		delete m_cells;
+		delete[] m_cells;
 
 	delete m_curScoreBoard;
 	delete m_bestScoreBoard;
 	delete m_tileBoard;
+}
+
+void Game::restart()
+{
+	forEachTile([] (Tile *tile) { delete tile; });
+	std::fill(m_cells, m_cells + m_size*m_size, nullptr);
+
+	m_gameOver = false;
+	m_score = 0;
+
+	addRandomTile();
+	addRandomTile();
 }
 
 std::vector<int> Game::getAvailableCells()
@@ -158,6 +172,9 @@ void Game::reduce(const std::vector<int> &mapping, bool *pMoved, int *pDeltaScor
 
 void Game::move(Dir dir)
 {
+	if(m_gameOver)
+		return;
+
 	// [FIXED] ensure their animation have ended
 	forEachTile([] (Tile *tile) { tile->clearMergedFrom(); });
 

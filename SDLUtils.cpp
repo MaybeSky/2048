@@ -71,7 +71,7 @@ void CloseSDL()
 const SDL_Color BLACK = { 0, 0, 0, 0 };
 const SDL_Color WHITE = { 255, 255, 255, 255 };
 
-SDL_Color Color_Mix(SDL_Color &color1, SDL_Color &color2, double weight)
+SDL_Color Color_Mix(const SDL_Color &color1, const SDL_Color &color2, double weight)
 {
 	double p = weight;
 	double w = p * 2 - 1;

@@ -23,6 +23,7 @@ public:
 	~Game();
 	void init(int size);
 	void quit();
+	void restart();
 	void move(Dir dir);
 
 	void render();
