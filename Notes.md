@@ -18,7 +18,7 @@
 * [Why it is OK to return vector from function? - Stack Overflow](http://stackoverflow.com/questions/22655059/why-it-is-ok-to-return-vector-from-function) C++可以把局部vector的内容move至返回值赋给的vector，避免copy
 * [stl - How do I reverse a C++ vector? - Stack Overflow](http://stackoverflow.com/questions/8877448/how-do-i-reverse-a-c-vector)
 * [Explicit Return Type of Lambda - Stack Overflow](http://stackoverflow.com/questions/9620098/explicit-return-type-of-lambda) 当lambda表达式的语句数>1时，要在lambda参数表后面加入箭头来明确指定返回值类型：<pre>
-[] (...) -> returnType { ... }
+\[\] (...) -> returnType { ... }
 </pre>
 * [STL remove doesn't work as expected?](http://stackoverflow.com/questions/6456870/stl-remove-doesnt-work-as-expected) std::remove()和std::remove_if()并不会收缩容器，要实现完整的移除还需要再调用容器的erase方法：<pre>
 auto newEnd = std::remove\_if(v.begin(), v.end(), &lt;pred&gt;);
