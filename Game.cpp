@@ -1,7 +1,7 @@
 #include "Game.h"
 #include <ctime>
 #include <utility> // move
-#include <algorithm> // fill
+#include <algorithm> // fill, for_each
 #include "Render.h"
 
 Game::Game()
@@ -198,7 +198,7 @@ void Game::move(Dir dir)
 	if(moved) {
 		if(deltaScore > 0) {
 			m_score += deltaScore;
-			m_scoreAddition = std::make_shared<ScoreAddition>(deltaScore);
+			m_scoreAdditions.push_back(new ScoreAddition(deltaScore));
 			if(m_score > m_bestScore)
 				m_bestScore = m_score;
 		}
@@ -248,11 +248,11 @@ void Game::render()
 	m_bestScoreBoard->render();
 	m_curScoreBoard->render();
 
-	if(m_scoreAddition) {
-		m_scoreAddition->render(
-			m_curScoreBoard->x() + (m_curScoreBoard->width() - m_scoreAddition->width()) / 2,
-			m_curScoreBoard->y() + m_curScoreBoard->height() - m_scoreAddition->height() - 2);
-	}
+	std::for_each(m_scoreAdditions.begin(), m_scoreAdditions.end(), [&] (ScoreAddition *a) {
+		a->render(
+			m_curScoreBoard->x() + (m_curScoreBoard->width() - a->width()) / 2,
+			m_curScoreBoard->y() + m_curScoreBoard->height() - a->height() - 2);
+	});
 
 	m_tileBoard->render();
 }
@@ -262,6 +262,20 @@ void Game::update(int delta_ms)
 	auto animateTile = [=] (Tile *t) { t->update(delta_ms); };
 	forEachTile(animateTile);
 
-	if(m_scoreAddition)
-		m_scoreAddition->update(delta_ms);
+	// [FIXME] more elegant solution?
+	std::vector<ScoreAddition *> toDelete;
+	std::for_each(m_scoreAdditions.begin(), m_scoreAdditions.end(), [&] (ScoreAddition *a) {
+		a->update(delta_ms);
+		if(!a->alive())
+			toDelete.push_back(a);
+	});
+
+	auto newEnd = std::remove_if(m_scoreAdditions.begin(), m_scoreAdditions.end(), [] (ScoreAddition *a) {
+		return !a->alive();
+	});
+	m_scoreAdditions.erase(newEnd, m_scoreAdditions.end());
+
+	std::for_each(toDelete.begin(), toDelete.end(), [] (ScoreAddition *a) {
+		delete a;
+	});
 }

@@ -46,10 +46,10 @@ private:
 	
 	ScoreBoard *m_curScoreBoard;
 	ScoreBoard *m_bestScoreBoard;
-	std::shared_ptr<ScoreAddition> m_scoreAddition;
 	friend class TileBoard;
 	TileBoard *m_tileBoard;
 
+	std::vector<ScoreAddition *> m_scoreAdditions;
 	std::vector<int> getAvailableCells();
 	void addRandomTile();
 	bool movesAvailable();

@@ -19,6 +19,8 @@ public:
 	int width() { return m_texture.width(); }
 	int height() { return m_texture.height(); }
 
+	bool alive() { return m_animationExecutor->alive(); }
+
 private:
 	Texture m_texture;
 	int m_y;

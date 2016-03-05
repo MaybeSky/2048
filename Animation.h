@@ -73,6 +73,8 @@ public:
 	void progress(int delta_ms);
 	void end();
 
+	bool alive() { return m_alive; }
+
 private:
 	std::shared_ptr<Animation> m_animation;
 	AnimationTarget *m_target;
